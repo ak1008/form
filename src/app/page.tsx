@@ -11,7 +11,7 @@ export default function Home() {
              <FileSignature className="h-16 w-16 text-primary" strokeWidth={1.5} />
           </div>
           <CardTitle className="text-4xl font-headline tracking-tight text-primary">
-            ConfiguQuote
+            Elastic Fantastic Service
           </CardTitle>
           <CardDescription className="text-lg text-muted-foreground mt-2">
             Configure your requirements and let AI draft your Request for Quotation.

@@ -1,0 +1,34 @@
+# Node modules
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Next.js build artifacts
+.next
+
+# Environment files (should be passed at runtime)
+.env
+.env*.local
+.env.development
+.env.production
+.env.test
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Editor/OS specific
+.vscode
+.DS_Store
+*.pem
+*.key
+
+# Firebase Studio specific / Project files not needed in image
+README.md
+apphosting.yaml
+components.json
+src/ai/dev.ts

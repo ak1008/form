@@ -1,4 +1,6 @@
 # Dockerfile
+ENV HTTP_PROXY="http://10.114.141.11:3128"
+ENV HTTPS_PROXY="http://10.114.141.11:3128"
 
 # Stage 1: Build the application
 FROM node:20-alpine AS builder

@@ -1,34 +1,32 @@
-# Node modules
+# Git files
+.git
+.gitignore
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Node.js
 node_modules
 npm-debug.log
 yarn-error.log
 
-# Next.js build artifacts
+# Next.js
 .next
 
-# Environment files (should be passed at runtime)
+# Environment files
 .env
-.env*.local
+.env.local
 .env.development
 .env.production
 .env.test
 
-# Git
-.git
-.gitignore
-
-# Docker
-Dockerfile
-.dockerignore
-
-# Editor/OS specific
+# IDE / Editor specific
 .vscode
-.DS_Store
-*.pem
-*.key
+.idea
+*.sublime-project
+*.sublime-workspace
 
-# Firebase Studio specific / Project files not needed in image
-README.md
-apphosting.yaml
-components.json
-src/ai/dev.ts
+# OS specific
+.DS_Store
+Thumbs.db

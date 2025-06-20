@@ -2,6 +2,9 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
+ENV HTTP_PROXY="http://10.114.141.11:3128"
+ENV HTTPS_PROXY="http://10.114.141.11:3128"
+
 # Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED 1
 

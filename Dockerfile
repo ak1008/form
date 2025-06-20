@@ -18,7 +18,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Build the Next.js application
-RUN npm run build
+RUN npx next build
 
 # Stage 2: Create the production image
 FROM node:20-alpine AS runner

@@ -1,55 +1,58 @@
-# Stage 1: Builder
-# Use an official Node.js LTS version. Alpine versions are smaller.
+# Stage 1: Build the application
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Install dependencies
-# Copy package.json and package-lock.json (if available)
-COPY package.json ./
-# If you have a package-lock.json, copy it too for consistent installs
-COPY package-lock.json* ./
-# If you have a .npmrc file, copy it as well
-# COPY .npmrc ./
-
-# Install dependencies. --frozen-lockfile is recommended if you have package-lock.json
-# to ensure reproducible builds.
-RUN npm install --frozen-lockfile
-
-# Copy the rest of the application source code
-COPY . .
-
-# Set NEXT_TELEMETRY_DISABLED to 1 to prevent Next.js from trying to collect telemetry during build
+# Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# Copy package.json and package-lock.json (or yarn.lock if you use yarn)
+COPY package.json package-lock.json* ./
+
+# Install dependencies using --frozen-lockfile to ensure exact versions from lockfile
+# This also installs devDependencies needed for the build
+RUN npm install --frozen-lockfile
+
+# Copy the rest of the application code
+COPY . .
+
 # Build the Next.js application
+# This will use the 'next' command from node_modules/.bin
 RUN npm run build
 
-# Stage 2: Production image
-# Use the same Node.js version as the builder for consistency
+# Stage 2: Create the production image
 FROM node:18-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+# Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
 
-# Create a non-root user for security (Next.js standalone output often creates a 'nextjs' user)
-# RUN addgroup --system --gid 1001 nodejs
-# RUN adduser --system --uid 1001 nextjs
-# USER nextjs
+# Set up a directory for Genkit temp files and ensure it's writable.
+# The default user for node:alpine is root. If running as a non-root user later,
+# ensure that user has write permissions here.
+RUN mkdir -p /tmp/genkit && \
+    chmod -R 777 /tmp/genkit
+    # Using 777 for simplicity here to ensure writability for Genkit.
+    # For production, more specific permissions are better.
+    # If you create and switch to a non-root user (e.g., 'nextjs'), you would typically do:
+    # RUN mkdir -p /tmp/genkit && chown nextjs:nextjs /tmp/genkit && chmod 700 /tmp/genkit
 
-# Copy built assets from the builder stage
-# Next.js with `output: 'standalone'` bundles the server and necessary node_modules.
-COPY --from=builder --chown=1001:1001 /app/.next/standalone ./
-COPY --from=builder --chown=1001:1001 /app/.next/static ./.next/static
+# Copy the standalone output from the builder stage
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
-# If you have a public folder with static assets, copy it
-COPY --from=builder --chown=1001:1001 /app/public ./public
-
-# Expose the port the app runs on (default is 3000)
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Define the GID for the nextjs user (or the user you're running as)
-ENV GID=1001
+# Start the Next.js application
+# The standalone output produces a server.js file.
+# By default, this will run as root.
+# For better security in production, it's recommended to create a non-root user:
+# RUN addgroup --system --gid 1001 nodejs
+# RUN adduser --system --uid 1001 nextjs
+# And then switch to that user before the CMD:
+# USER nextjs
+# If you do this, ensure /app and /tmp/genkit are appropriately owned/writable by this user.
 
-# Start the app. `server.js` is at the root of the standalone output.
 CMD ["node", "server.js"]

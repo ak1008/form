@@ -18,6 +18,9 @@ RUN npm install --frozen-lockfile
 # Copy the rest of the application code
 COPY . .
 
+# Copy the public directory
+COPY public ./public
+
 # Build the Next.js application
 # This will use the 'next' command from node_modules/.bin
 RUN npx next build

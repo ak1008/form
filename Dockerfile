@@ -17,7 +17,7 @@ COPY . .
 
 # Build the Next.js application
 # This will use the 'next' command from node_modules/.bin
-RUN npm run build
+RUN npx next build
 
 # Stage 2: Create the production image
 FROM node:18-alpine AS runner

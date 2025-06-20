@@ -9,9 +9,6 @@ Dockerfile
 # Node.js modules
 node_modules
 
-# Next.js build output
-.next
-
 # IDE and OS specific
 .vscode
 *.env
